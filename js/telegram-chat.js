@@ -5,7 +5,7 @@
 
 let allMessages = [];
 let selectedParticipant = null;
-let isDarkTheme = localStorage.getItem('theme') !== 'light'; // Default to dark
+let isDarkTheme = localStorage.getItem('theme') === null || localStorage.getItem('theme') !== 'light'; // Default to dark
 
 // Initialize theme on page load
 function initTheme() {
@@ -192,14 +192,16 @@ function groupMessages(messages, selectedPerson) {
 // Format message groups into HTML
 function formatMessages(groups, selectedPerson) {
     let html = '';
+    let messageIndex = 0;
     
     for (let group of groups) {
         for (let msg of group.messages) {
+            messageIndex++;
             const isSent = getNormalizedName(msg.sender) === selectedPerson;
             const bubbleClass = isSent ? 'sent' : 'received';
             
             const senderDisplay = !isSent ? `<div class="sender-name">${escapeHtml(group.sender)}</div>` : '';
-            const replyDisplay = msg.reply ? `<div class="reply-to">${escapeHtml(msg.reply)}</div>` : '';
+            const replyDisplay = msg.reply ? `<div class="reply-to" onclick="highlightMessage('${escapeHtml(msg.reply)}', event)" style="cursor: pointer;">${escapeHtml(msg.reply)}</div>` : '';
             const textHtml = `<div class="message-text">${escapeHtml(msg.text)}</div>`;
             const timeHtml = `<div class="message-time">${escapeHtml(msg.time)}</div>`;
             
@@ -220,7 +222,7 @@ function formatMessages(groups, selectedPerson) {
             }
             
             html += `
-                <div class="message-group ${bubbleClass}">
+                <div class="message-group ${bubbleClass}" data-message-text="${escapeHtml(msg.text)}">
                     <div class="message-bubble">
                         ${senderDisplay}
                         ${replyDisplay}
@@ -258,6 +260,28 @@ function selectParticipant(name) {
     });
 }
 
+// Highlight replied message
+function highlightMessage(replyText, event) {
+    event.stopPropagation();
+    
+    const messagesContainer = document.getElementById('messagesContainer');
+    const messageGroups = messagesContainer.querySelectorAll('.message-group');
+    
+    // Remove previous highlight
+    messageGroups.forEach(group => {
+        group.classList.remove('highlighted');
+    });
+    
+    // Find and highlight the message with matching text
+    messageGroups.forEach(group => {
+        if (group.getAttribute('data-message-text') === replyText) {
+            group.classList.add('highlighted');
+            // Scroll to the highlighted message
+            group.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+}
+
 // Display chat
 function displayChat(selectedPerson) {
     const selectionScreen = document.getElementById('selectionScreen');
@@ -286,9 +310,9 @@ function displayChat(selectedPerson) {
     selectionScreen.classList.add('hidden');
     chatScreen.classList.remove('hidden');
     
-    // Scroll to bottom
+    // Scroll to top (oldest message)
     setTimeout(() => {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        messagesContainer.scrollTop = 0;
     }, 100);
 }
 
