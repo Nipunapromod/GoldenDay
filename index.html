@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Chat Viewer</title>
+    <link rel="stylesheet" href="css/telegram-style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Selection Screen -->
+        <div id="selectionScreen" class="screen">
+            <button class="theme-toggle-selection" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
+            <div class="selection-container">
+                <div class="selection-header">
+                    <h1>Select Participant</h1>
+                    <p>Choose whose messages you want to view</p>
+                </div>
+                <div class="selection-buttons">
+                    <button class="participant-btn" onclick="selectParticipant('Nipuna')">
+                        <div class="avatar">N</div>
+                        <div class="name">Nipuna</div>
+                    </button>
+                    <button class="participant-btn" onclick="selectParticipant('Dilshani')">
+                        <div class="avatar">D</div>
+                        <div class="name">Dilshani</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div id="chatScreen" class="screen hidden">
+            <div class="chat-container">
+                <!-- Header -->
+                <div class="chat-header">
+                    <button class="back-btn" onclick="goBack()">←</button>
+                    <div class="header-info">
+                        <h2 id="headerName"></h2>
+                        <p id="chatTitle"></p>
+                    </div>
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
+                </div>
+
+                <!-- Messages -->
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Messages will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/telegram-chat.js"></script>
+</body>
+</html>
